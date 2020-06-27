@@ -1,5 +1,7 @@
 package com.flamexander.cloud.client;
 
+import com.flamexander.cloud.client.entities.Employee;
+import com.flamexander.cloud.client.services.EmplService;
 import com.netflix.discovery.EurekaClient;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class GreetingControllerImpl implements GreetingController {
@@ -20,6 +23,8 @@ public class GreetingControllerImpl implements GreetingController {
 
     WriteExcel writeExcel;
 
+    private EmplService emplService;
+
     @Autowired
     public void setGreetingClient(ExcelReader excelReader) {
         this.excelReader = excelReader;
@@ -30,6 +35,12 @@ public class GreetingControllerImpl implements GreetingController {
         this.writeExcel = writeExcel;
     }
 
+    @Autowired
+    public void setEmplService(EmplService emplService) {
+        this.emplService = emplService;
+    }
+
+
     @Value("${spring.application.name}")
     private String appName;
 
@@ -38,15 +49,13 @@ public class GreetingControllerImpl implements GreetingController {
 
     @Override
     public String greeting() {
-//        try {
-//            return String.format(excelReader.read().toString());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (InvalidFormatException e) {
-//            e.printStackTrace();
-//        }
-//        return "";
-        return "hello EurekaClient";
+        String res ="";
+        for (Employee e : emplService.getAllEmployee()) {
+            res += e.toString() + "|| ";
+        }
+        return res;
+//
+//        return "TEST";
     }
 
     @Override
